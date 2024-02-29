@@ -2,10 +2,10 @@
 
 pragma solidity 0.8.24;
 
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC721/IERC721.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/access/Ownable.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/utils/Strings.sol";
 
 contract BB11 is ERC721Enumerable, Ownable {
     uint256 public MAX_SUPPLY;
@@ -60,6 +60,15 @@ contract BB11 is ERC721Enumerable, Ownable {
         
         _mint(to, _tokenId);
         _tokenId++;
+    }
+
+    function mintBulk(address[] calldata recipients) public onlyOwner {
+        require(_tokenId + recipients.length - 1 <= MAX_SUPPLY, "Max supply exceeded");
+        
+        for(uint i = 0; i < recipients.length; i++) {
+            require(recipients[i] != address(0), "Cannot mint to the zero address");
+            _mint(recipients[i], _tokenId++);
+        }
     }
 
     function setBaseURI(string memory baseTokenURI) public onlyOwner {

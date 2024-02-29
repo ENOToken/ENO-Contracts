@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
-//
-pragma solidity 0.8.20;
 
+pragma solidity 0.8.24;
+
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
-contract Badge is ERC721Enumerable, Ownable {
+contract BB11 is ERC721Enumerable, Ownable {
     uint256 public MAX_SUPPLY;
     uint256 public _tokenId = 1;
     string public _baseTokenURI;
@@ -15,7 +17,7 @@ contract Badge is ERC721Enumerable, Ownable {
     mapping(address => uint256) private _whitelistQuota;
     mapping(address => bool) private _whitelistedAddresses;
 
-    constructor(uint256 maxSupply, uint256 _maxPerWallet) ERC721("Badge Name", "Badge") {
+    constructor(uint256 maxSupply, uint256 _maxPerWallet) ERC721("Badge Blackbox 1.1", "BB1.1") {
         MAX_SUPPLY = maxSupply;
         maxPerWallet = _maxPerWallet;
     }
@@ -65,7 +67,7 @@ contract Badge is ERC721Enumerable, Ownable {
     }
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+        require(ownerOf(tokenId) != address(0), "ERC721Metadata: URI query for nonexistent token");
         
         if (bytes(_baseTokenURI).length > 0) {
             return string(abi.encodePacked(
@@ -110,5 +112,21 @@ contract Badge is ERC721Enumerable, Ownable {
             require(transfersEnabled, "Transfers are currently disabled for non-owner accounts.");
         }
         super.safeTransferFrom(from, to, tokenId, _data);
+    }
+
+    function getWhitelistQuota(address account) public view returns (uint256) {
+        return _whitelistQuota[account];
+    }
+
+    function toggleTransfers() public onlyOwner {
+        transfersEnabled = !transfersEnabled;
+    }
+
+    function setMaxSupply(uint256 newMaxSupply) public onlyOwner {
+        MAX_SUPPLY = newMaxSupply;
+    }
+
+    function setMaxPerWallet(uint256 newMaxPerWallet) public onlyOwner {
+        maxPerWallet = newMaxPerWallet;
     }
 }

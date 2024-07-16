@@ -40,36 +40,22 @@ contract NFTENO is ERC721Enumerable, Ownable {
     }
 
     function setMaxSupply(uint256 newSupply) public onlyOwner {
-        max_supply = newSupply;
-    }
-
-    function setComision(uint256 newComision) public onlyOwner {
-        comision = newComision;
-    }
-
-    function setSaleStartTime(uint256 newStartTime) public onlyOwner {
-        saleStartTime = newStartTime;
-    }
-
-    function setMaxMintsPerWallet(uint256 newMaxMints) public onlyOwner {
-        maxMintsPerWallet = newMaxMints;
+        require(newSupply > max_supply, "New supply must be greater than the current supply");
+        max_supply = newSupply; // Solo se puede aumentar, no disminuir
     }
 
     function buyNFTWithENO() public {
         require(block.timestamp >= saleStartTime, "Sale has not started yet"); // Verificar si la venta ha comenzado
         require(enoToken.transferFrom(msg.sender, address(this), NFTPriceInENO), "Failed to transfer ENO");
         require(_mintedCount[msg.sender] < maxMintsPerWallet, "Exceeds maximum NFTs");
-        handlePayment(NFTPriceInENO);
-        _mintedCount[msg.sender] += 1;
-        mint(msg.sender);
-    }
 
-    function handlePayment(uint256 paymentAmount) internal {
-        uint256 commissionAmount = paymentAmount * comision / 100;
-        uint256 ownerAmount = paymentAmount - commissionAmount;
-
+        uint256 commissionAmount = NFTPriceInENO * comision / 100;
+        uint256 ownerAmount = NFTPriceInENO - commissionAmount;
         require(enoToken.transfer(commissionWallet, commissionAmount), "Commission transfer failed");
         require(enoToken.transfer(ownerWallet, ownerAmount), "Owner transfer failed");
+ 
+        _mintedCount[msg.sender] += 1;
+        mint(msg.sender);
     }
 
     function mint(address to) internal {

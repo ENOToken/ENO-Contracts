@@ -6,8 +6,11 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contr
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/access/Ownable.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC20/IERC20.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/utils/Strings.sol";
 
 contract NFTENO is ERC721Enumerable, Ownable {
+    using Strings for uint256;
+
     uint256 public max_supply;
     uint256 public NFTPriceInENO;
     uint256 private _tokenId = 1;
@@ -21,6 +24,10 @@ contract NFTENO is ERC721Enumerable, Ownable {
     uint256 public saleStartTime;
     uint256 public maxMintsPerWallet;
 
+    bool public sameMetadataForAll;
+    string public baseURI;
+    string public commonMetadataURI;
+
     constructor(
         address _commissionWallet,
         address _ownerWallet,
@@ -28,7 +35,8 @@ contract NFTENO is ERC721Enumerable, Ownable {
         uint256 _saleStartTime,
         uint256 _maxMintsPerWallet,
         uint256 _maxSupply,
-        uint256 _NFTPriceInENO
+        uint256 _NFTPriceInENO,
+        bool _sameMetadataForAll
     ) ERC721("NFTENO", "NFTENO") Ownable() {
         commissionWallet = _commissionWallet;
         ownerWallet = _ownerWallet;
@@ -37,7 +45,16 @@ contract NFTENO is ERC721Enumerable, Ownable {
         maxMintsPerWallet = _maxMintsPerWallet;
         max_supply = _maxSupply;
         NFTPriceInENO = _NFTPriceInENO;
-    } 
+        sameMetadataForAll = _sameMetadataForAll;
+    }
+
+    function setMetadataURI(string memory newURI) public onlyOwner {
+        if (sameMetadataForAll) {
+            commonMetadataURI = newURI;
+        } else {
+            baseURI = newURI;
+        }
+    }
 
     function setNFTPriceInENO(uint256 newPrice) public onlyOwner {
         NFTPriceInENO = newPrice; // Asume que ENO tiene 18 decimales
@@ -46,6 +63,16 @@ contract NFTENO is ERC721Enumerable, Ownable {
     function setMaxSupply(uint256 newSupply) public onlyOwner {
         require(newSupply > max_supply, "New supply must be greater than the current supply");
         max_supply = newSupply; // Solo se puede aumentar, no disminuir
+    }
+
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+
+        if (sameMetadataForAll) {
+            return commonMetadataURI;
+        } else {
+            return string(abi.encodePacked(baseURI, tokenId.toString(), ".json"));
+        }
     }
 
     function buyNFTWithENO() public {

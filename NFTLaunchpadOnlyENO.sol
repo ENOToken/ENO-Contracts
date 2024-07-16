@@ -41,6 +41,10 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
         uint256 _NFTPriceInENO,
         bool _sameMetadataForAll
     ) ERC721("NFTENO", "NFTENO") Ownable() {
+        require(_commissionWallet != address(0), "Commission wallet address cannot be zero");
+        require(_ownerWallet != address(0), "Owner wallet address cannot be zero");
+        require(_enoTokenAddress != address(0), "ENO token address cannot be zero");
+
         commissionWallet = _commissionWallet;
         ownerWallet = _ownerWallet;
         enoToken = IERC20(_enoTokenAddress);
@@ -60,6 +64,7 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
     }
 
     function setNFTPriceInENO(uint256 newPrice) public onlyOwner {
+        require(newPrice > 0, "Price must be greater than zero");
         NFTPriceInENO = newPrice;
     }
 

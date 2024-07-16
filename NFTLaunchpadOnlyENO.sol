@@ -7,8 +7,9 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contr
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/access/Ownable.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC20/IERC20.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/utils/Strings.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/security/ReentrancyGuard.sol";
 
-contract NFTENO is ERC721Enumerable, Ownable {
+contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
     using Strings for uint256;
 
     uint256 public max_supply;
@@ -75,7 +76,7 @@ contract NFTENO is ERC721Enumerable, Ownable {
         }
     }
 
-    function buyNFTWithENO() public {
+    function buyNFTWithENO() public nonReentrant {
         require(block.timestamp >= saleStartTime, "Sale has not started yet"); // Verificar si la venta ha comenzado
         require(enoToken.transferFrom(msg.sender, address(this), NFTPriceInENO), "Failed to transfer ENO");
         require(_mintedCount[msg.sender] < maxMintsPerWallet, "Exceeds maximum NFTs");

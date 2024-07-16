@@ -9,26 +9,30 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contr
 
 contract NFTENO is ERC721Enumerable, Ownable {
     uint256 public max_supply = 20;
-    uint256 public NFTPriceInENO = 10000000000000000; // Precio del NFT en subunidades de ENO (0.01 ENO asumido con 18 decimales)
+    uint256 public NFTPriceInENO = 10000000000000000;
     uint256 private _tokenId = 1;
     uint256 public comision = 10;
     
     address public ownerWallet;
     address public commissionWallet;
     IERC20 public enoToken;
+    mapping(address => uint256) private _mintedCount;
     
-    uint256 public saleStartTime; // Timestamp para el inicio de la venta
+    uint256 public saleStartTime;
+    uint256 public maxMintsPerWallet;
 
     constructor(
         address _commissionWallet,
         address _ownerWallet,
         address _enoTokenAddress,
-        uint256 _saleStartTime // Parámetro para establecer la fecha de inicio en el constructor
+        uint256 _saleStartTime,
+        uint256 _maxMintsPerWallet
     ) ERC721("NFTENO", "NFTENO") Ownable() {
         commissionWallet = _commissionWallet;
         ownerWallet = _ownerWallet;
-        enoToken = IERC20(_enoTokenAddress); // Inicializar el contrato ENO
-        saleStartTime = _saleStartTime; // Establecer la fecha de inicio
+        enoToken = IERC20(_enoTokenAddress);
+        saleStartTime = _saleStartTime;
+        maxMintsPerWallet = _maxMintsPerWallet;
     }
 
     function setNFTPriceInENO(uint256 newPrice) public onlyOwner {
@@ -47,10 +51,16 @@ contract NFTENO is ERC721Enumerable, Ownable {
         saleStartTime = newStartTime;
     }
 
+    function setMaxMintsPerWallet(uint256 newMaxMints) public onlyOwner {
+        maxMintsPerWallet = newMaxMints;
+    }
+
     function buyNFTWithENO() public {
         require(block.timestamp >= saleStartTime, "Sale has not started yet"); // Verificar si la venta ha comenzado
         require(enoToken.transferFrom(msg.sender, address(this), NFTPriceInENO), "Failed to transfer ENO");
+        require(_mintedCount[msg.sender] < maxMintsPerWallet, "Exceeds maximum NFTs");
         handlePayment(NFTPriceInENO);
+        _mintedCount[msg.sender] += 1;
         mint(msg.sender);
     }
 

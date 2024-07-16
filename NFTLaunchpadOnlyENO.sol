@@ -8,8 +8,8 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contr
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC20/IERC20.sol";
 
 contract NFTENO is ERC721Enumerable, Ownable {
-    uint256 public max_supply = 20;
-    uint256 public NFTPriceInENO = 10000000000000000;
+    uint256 public max_supply;
+    uint256 public NFTPriceInENO;
     uint256 private _tokenId = 1;
     uint256 public comision = 10;
     
@@ -26,14 +26,18 @@ contract NFTENO is ERC721Enumerable, Ownable {
         address _ownerWallet,
         address _enoTokenAddress,
         uint256 _saleStartTime,
-        uint256 _maxMintsPerWallet
+        uint256 _maxMintsPerWallet,
+        uint256 _maxSupply,
+        uint256 _NFTPriceInENO
     ) ERC721("NFTENO", "NFTENO") Ownable() {
         commissionWallet = _commissionWallet;
         ownerWallet = _ownerWallet;
         enoToken = IERC20(_enoTokenAddress);
         saleStartTime = _saleStartTime;
         maxMintsPerWallet = _maxMintsPerWallet;
-    }
+        max_supply = _maxSupply;
+        NFTPriceInENO = _NFTPriceInENO;
+    } 
 
     function setNFTPriceInENO(uint256 newPrice) public onlyOwner {
         NFTPriceInENO = newPrice; // Asume que ENO tiene 18 decimales

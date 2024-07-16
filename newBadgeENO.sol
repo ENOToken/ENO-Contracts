@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/access/Ownable.sol";
+import "https://github.com.OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/access/Ownable.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/security/ReentrancyGuard.sol";
 
 contract NewENOBadge is ERC721Enumerable, Ownable, ReentrancyGuard {
@@ -13,39 +13,50 @@ contract NewENOBadge is ERC721Enumerable, Ownable, ReentrancyGuard {
 
     mapping(address => uint256) private _mintedCount;
 
-    uint256 public saleStartTime; // Timestamp para el inicio de la venta
+    uint256 public saleStartTime;
+
+    event Minted(address indexed to, uint256 tokenId);
+    event SaleStartTimeSet(uint256 newStartTime);
+    event CommonURISet(string newURI);
+    event TransfersToggled(bool enabled);
+    event MaxSupplySet(uint256 newMaxSupply);
 
     constructor(
         string memory name,
         string memory symbol,
         uint256 maxSupply,
-        uint256 _saleStartTime // Parámetro para establecer la fecha de inicio en el constructor
+        uint256 _saleStartTime
     ) ERC721(name, symbol) {
         MAX_SUPPLY = maxSupply;
-        saleStartTime = _saleStartTime; // Establecer la fecha de inicio
+        saleStartTime = _saleStartTime;
     }
 
     function mint(address to) public nonReentrant {
-        require(block.timestamp >= saleStartTime, "Sale has not started yet"); // Verificar si la venta ha comenzado
+        require(block.timestamp >= saleStartTime, "Sale has not started yet");
         require(_tokenId <= MAX_SUPPLY, "Max supply reached");
         require(_mintedCount[msg.sender] < 1, "Each address may only mint one NFT");
 
         _mintedCount[msg.sender] += 1;
         _mint(to, _tokenId);
+        emit Minted(to, _tokenId);
         _tokenId++;
     }
 
     function setSaleStartTime(uint256 newStartTime) public onlyOwner {
+        require(newStartTime > block.timestamp, "New start time must be in the future");
         saleStartTime = newStartTime;
+        emit SaleStartTimeSet(newStartTime);
     }
 
     function setCommonURI(string memory newURI) public onlyOwner {
-        _commonURI = newURI; 
+        require(bytes(newURI).length > 0, "URI cannot be empty");
+        _commonURI = newURI;
+        emit CommonURISet(newURI);
     }
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
-        return _commonURI; 
+        return _commonURI;
     }
 
     function transferFrom(
@@ -84,10 +95,12 @@ contract NewENOBadge is ERC721Enumerable, Ownable, ReentrancyGuard {
 
     function toggleTransfers() public onlyOwner {
         transfersEnabled = !transfersEnabled;
+        emit TransfersToggled(transfersEnabled);
     }
 
     function setMaxSupply(uint256 newMaxSupply) public onlyOwner {
         require(newMaxSupply > MAX_SUPPLY, "New max supply must be greater than current max supply");
         MAX_SUPPLY = newMaxSupply;
+        emit MaxSupplySet(newMaxSupply);
     }
 }

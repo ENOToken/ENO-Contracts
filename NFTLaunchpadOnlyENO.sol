@@ -93,14 +93,15 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
 
     function buyNFTWithENO() public nonReentrant {
         require(block.timestamp >= saleStartTime, "Sale has not started yet");
-        require(enoToken.transferFrom(msg.sender, address(this), NFTPriceInENO), "Failed to transfer ENO");
+        require(NFTPriceInENO > 0, "NFT price must be greater than zero");
         require(_mintedCount[msg.sender] < maxMintsPerWallet, "Exceeds maximum NFTs");
+        require(enoToken.transferFrom(msg.sender, address(this), NFTPriceInENO), "Failed to transfer ENO");
 
         uint256 commissionAmount = NFTPriceInENO * comision / 100;
         uint256 ownerAmount = NFTPriceInENO - commissionAmount;
         enoToken.safeTransfer(commissionWallet, commissionAmount);
         enoToken.safeTransfer(ownerWallet, ownerAmount);
- 
+
         _mintedCount[msg.sender] += 1;
         uint256 newTokenId = _tokenId;
         mint(msg.sender);
@@ -112,4 +113,5 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
         _mint(to, _tokenId);
         _tokenId++;
     }
+
 }

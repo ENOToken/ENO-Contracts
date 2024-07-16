@@ -8,9 +8,11 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contr
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC20/IERC20.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/utils/Strings.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/security/ReentrancyGuard.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
     using Strings for uint256;
+    using SafeERC20 for IERC20;
 
     uint256 public max_supply;
     uint256 public NFTPriceInENO;
@@ -83,8 +85,8 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
 
         uint256 commissionAmount = NFTPriceInENO * comision / 100;
         uint256 ownerAmount = NFTPriceInENO - commissionAmount;
-        require(enoToken.transfer(commissionWallet, commissionAmount), "Commission transfer failed");
-        require(enoToken.transfer(ownerWallet, ownerAmount), "Owner transfer failed");
+        enoToken.safeTransfer(commissionWallet, commissionAmount);
+        enoToken.safeTransfer(ownerWallet, ownerAmount);
  
         _mintedCount[msg.sender] += 1;
         mint(msg.sender);

@@ -31,6 +31,11 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
     string public baseURI;
     string public commonMetadataURI;
 
+    event MetadataURISet(string newURI);
+    event NFTPriceSet(uint256 newPrice);
+    event MaxSupplySet(uint256 newSupply);
+    event NFTBoughtAndMinted(address indexed buyer, uint256 tokenId, uint256 price, uint256 commissionAmount, uint256 ownerAmount);
+
     constructor(
         address _commissionWallet,
         address _ownerWallet,
@@ -61,16 +66,19 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
         } else {
             baseURI = newURI;
         }
+        emit MetadataURISet(newURI);
     }
 
     function setNFTPriceInENO(uint256 newPrice) public onlyOwner {
         require(newPrice > 0, "Price must be greater than zero");
         NFTPriceInENO = newPrice;
+        emit NFTPriceSet(newPrice);
     }
 
     function setMaxSupply(uint256 newSupply) public onlyOwner {
         require(newSupply > max_supply, "New supply must be greater than the current supply");
         max_supply = newSupply;
+        emit MaxSupplySet(newSupply);
     }
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
@@ -94,7 +102,9 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
         enoToken.safeTransfer(ownerWallet, ownerAmount);
  
         _mintedCount[msg.sender] += 1;
+        uint256 newTokenId = _tokenId;
         mint(msg.sender);
+        emit NFTBoughtAndMinted(msg.sender, newTokenId, NFTPriceInENO, commissionAmount, ownerAmount);
     }
 
     function mint(address to) internal {

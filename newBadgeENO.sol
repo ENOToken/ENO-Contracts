@@ -15,7 +15,8 @@ pragma solidity 0.8.20;
  * @title Badges
  * @notice This contract represents a system for issuing badges that can be minted without cost.
  * @dev Implements ERC721 tokens and uses ERC20 tokens for minting badges.
- * @author Juan José de la Rosa
+ * @web enotoken.io
+ * @author Juan José de la Rosa | ENO CTO
  * @link https://www.linkedin.com/in/juan-jose-de-la-rosa/
  *
  */                                                            

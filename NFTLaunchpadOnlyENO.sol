@@ -1,6 +1,24 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity 0.8.20;
+
+/*
+ *
+ *  /$$$$$$$$ /$$   /$$  /$$$$$$  /$$$$$$$$ /$$$$$$  /$$   /$$ /$$$$$$$$ /$$   /$$     /$$$$$$  /$$$$$$ 
+ * | $$_____/| $$$ | $$ /$$__  $$|__  $$__//$$__  $$| $$  /$$/| $$_____/| $$$ | $$    |_  $$_/ /$$__  $$
+ * | $$      | $$$$| $$| $$  \ $$   | $$  | $$  \ $$| $$ /$$/ | $$      | $$$$| $$      | $$  | $$  \ $$
+ * | $$$$$   | $$ $$ $$| $$  | $$   | $$  | $$  | $$| $$$$$/  | $$$$$   | $$ $$ $$      | $$  | $$  | $$
+ * | $$__/   | $$  $$$$| $$  | $$   | $$  | $$  | $$| $$  $$  | $$__/   | $$  $$$$      | $$  | $$  | $$
+ * | $$      | $$\  $$$| $$  | $$   | $$  | $$  | $$| $$\  $$ | $$      | $$\  $$$      | $$  | $$  | $$
+ * | $$$$$$$$| $$ \  $$|  $$$$$$/   | $$  |  $$$$$$/| $$ \  $$| $$$$$$$$| $$ \  $$ /$$ /$$$$$$|  $$$$$$/
+ * |________/|__/  \__/ \______/    |__/   \______/ |__/  \__/|________/|__/  \__/|__/|______/ \______/ 
+ *
+ * @title Launchpad
+ * @notice This contract represents a launchpad for NFTs that can be bought using ENO tokens.
+ * @dev Implements ERC721 tokens and uses ERC20 tokens for purchasing NFTs.
+ * @author Juan José de la Rosa
+ * @link https://www.linkedin.com/in/juan-jose-de-la-rosa/
+ *
+ */    
 
 // Openzeppelin-v4.0.0
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC721/IERC721.sol";

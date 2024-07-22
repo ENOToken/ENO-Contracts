@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.20;
 
+// Openzeppelin-v4.0.0
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/access/Ownable.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/security/ReentrancyGuard.sol";
@@ -21,12 +22,7 @@ contract NewENOBadge is ERC721Enumerable, Ownable, ReentrancyGuard {
     event TransfersToggled(bool enabled);
     event MaxSupplySet(uint256 newMaxSupply);
 
-    constructor(
-        string memory name,
-        string memory symbol,
-        uint256 maxSupply,
-        uint256 _saleStartTime
-    ) ERC721(name, symbol) {
+    constructor(string memory name, string memory symbol, uint256 maxSupply, uint256 _saleStartTime) ERC721(name, symbol) {
         MAX_SUPPLY = maxSupply;
         saleStartTime = _saleStartTime;
     }
@@ -59,34 +55,21 @@ contract NewENOBadge is ERC721Enumerable, Ownable, ReentrancyGuard {
         return _commonURI;
     }
 
-    function transferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) public override (ERC721, IERC721) {
+    function transferFrom(address from, address to, uint256 tokenId) public override (ERC721, IERC721) {
         if (from != owner()) {
             require(transfersEnabled, "Transfers are currently disabled for non-owner accounts.");
         }
         super.transferFrom(from, to, tokenId);
     }
 
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) public override (ERC721, IERC721) {
+    function safeTransferFrom(address from, address to, uint256 tokenId) public override (ERC721, IERC721) {
         if (from != owner()) {
             require(transfersEnabled, "Transfers are currently disabled for non-owner accounts.");
         }
         super.safeTransferFrom(from, to, tokenId);
     }
 
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory _data
-    ) public override (ERC721, IERC721) {
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) public override (ERC721, IERC721) {
         if (from != owner()) {
             require(transfersEnabled, "Transfers are currently disabled for non-owner accounts.");
         }

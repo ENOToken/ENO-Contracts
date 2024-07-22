@@ -2,6 +2,7 @@
 
 pragma solidity 0.8.20;
 
+// Openzeppelin-v4.0.0
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC721/IERC721.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/access/Ownable.sol";
@@ -36,16 +37,7 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
     event MaxSupplySet(uint256 newSupply);
     event NFTBoughtAndMinted(address indexed buyer, uint256 tokenId, uint256 price, uint256 commissionAmount, uint256 ownerAmount);
 
-    constructor(
-        address _commissionWallet,
-        address _ownerWallet,
-        address _enoTokenAddress,
-        uint256 _saleStartTime,
-        uint256 _maxMintsPerWallet,
-        uint256 _maxSupply,
-        uint256 _NFTPriceInENO,
-        bool _sameMetadataForAll
-    ) ERC721("NFTENO", "NFTENO") Ownable() {
+    constructor(address _commissionWallet, address _ownerWallet, address _enoTokenAddress, uint256 _saleStartTime, uint256 _maxMintsPerWallet, uint256 _maxSupply, uint256 _NFTPriceInENO, bool _sameMetadataForAll) ERC721("NFTENO", "NFTENO") Ownable() {
         require(_commissionWallet != address(0), "Commission wallet address cannot be zero");
         require(_ownerWallet != address(0), "Owner wallet address cannot be zero");
         require(_enoTokenAddress != address(0), "ENO token address cannot be zero");
@@ -113,5 +105,4 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
         _mint(to, _tokenId);
         _tokenId++;
     }
-
 }

@@ -15,7 +15,8 @@ pragma solidity 0.8.20;
  * @title Launchpad
  * @notice This contract represents a launchpad for NFTs that can be bought using ENO tokens.
  * @dev Implements ERC721 tokens and uses ERC20 tokens for purchasing NFTs.
- * @author Juan José de la Rosa
+ * @web https://enotoken.io/
+ * @author Juan José de la Rosa | ENO CTO
  * @link https://www.linkedin.com/in/juan-jose-de-la-rosa/
  *
  */    
@@ -43,7 +44,7 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
     /// @notice ID for the next token to be minted.
     uint256 private _tokenId = 1;
     /// @notice Commission percentage for each sale.
-    uint256 public comision = 10;
+    uint256 public comision;
 
     /// @notice Address of the owner wallet.
     address public ownerWallet;
@@ -92,7 +93,18 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
     /// @param _maxSupply Maximum supply of tokens.
     /// @param _NFTPriceInENO Price of each NFT in ENO.
     /// @param _sameMetadataForAll Indicates if the same metadata is used for all tokens.
-    constructor(address _commissionWallet, address _ownerWallet, address _enoTokenAddress, uint256 _saleStartTime, uint256 _maxMintsPerWallet, uint256 _maxSupply, uint256 _NFTPriceInENO, bool _sameMetadataForAll) ERC721("NFTENO", "NFTENO") Ownable() {
+    /// @param _comision Commission percentage for each sale.
+    constructor(
+        address _commissionWallet,
+        address _ownerWallet,
+        address _enoTokenAddress,
+        uint256 _saleStartTime,
+        uint256 _maxMintsPerWallet,
+        uint256 _maxSupply,
+        uint256 _NFTPriceInENO,
+        bool _sameMetadataForAll,
+        uint256 _comision
+    ) ERC721("NFTENO", "NFTENO") Ownable() {
         require(_commissionWallet != address(0), "Commission wallet address cannot be zero");
         require(_ownerWallet != address(0), "Owner wallet address cannot be zero");
         require(_enoTokenAddress != address(0), "ENO token address cannot be zero");
@@ -105,6 +117,7 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
         max_supply = _maxSupply;
         NFTPriceInENO = _NFTPriceInENO;
         sameMetadataForAll = _sameMetadataForAll;
+        comision = _comision;
     }
 
     /// @notice Function to set the metadata URI.

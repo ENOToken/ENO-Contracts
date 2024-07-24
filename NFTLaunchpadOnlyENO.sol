@@ -124,30 +124,13 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
     /// @param newURI New metadata URI.
     /// @dev If sameMetadataForAll is true, sets commonMetadataURI, otherwise sets baseURI.
     function setMetadataURI(string memory newURI) public onlyOwner {
+        require(block.timestamp < saleStartTime, "Cannot set metadata URI");
         if (sameMetadataForAll) {
             commonMetadataURI = newURI;
         } else {
             baseURI = newURI;
         }
         emit MetadataURISet(newURI);
-    }
-
-    /// @notice Function to set the price of NFTs in ENO tokens.
-    /// @param newPrice New price of the NFT in ENO.
-    /// @dev Requires the new price to be greater than zero.
-    function setNFTPriceInENO(uint256 newPrice) public onlyOwner {
-        require(newPrice > 0, "Price must be greater than zero");
-        NFTPriceInENO = newPrice;
-        emit NFTPriceSet(newPrice);
-    }
-
-    /// @notice Function to set the maximum supply of tokens.
-    /// @param newSupply New maximum supply.
-    /// @dev Requires the new supply to be greater than the current maximum supply.
-    function setMaxSupply(uint256 newSupply) public onlyOwner {
-        require(newSupply > max_supply, "New supply must be greater than the current supply");
-        max_supply = newSupply;
-        emit MaxSupplySet(newSupply);
     }
 
     /// @notice Function to get the URI of a token.

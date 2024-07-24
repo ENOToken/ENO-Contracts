@@ -43,25 +43,25 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
     uint256 public NFTPriceInENO;
     /// @notice ID for the next token to be minted.
     uint256 private _tokenId = 1;
-    /// @notice Commission percentage for each sale.
-    uint256 public comision;
 
     /// @notice Address of the owner wallet.
-    address public ownerWallet;
+    address public immutable ownerWallet;
     /// @notice Address of the commission wallet.
-    address public commissionWallet;
+    address public immutable commissionWallet;
     /// @notice Instance of the ENO token.
-    IERC20 public enoToken;
+    IERC20 public immutable enoToken;
     /// @notice Mapping to track the number of tokens minted by each address.
     mapping(address => uint256) private _mintedCount;
 
     /// @notice Timestamp when the sale starts.
-    uint256 public saleStartTime;
+    uint256 public immutable saleStartTime;
     /// @notice Maximum number of mints allowed per wallet.
-    uint256 public maxMintsPerWallet;
+    uint256 public immutable maxMintsPerWallet;
 
     /// @notice Indicates if the same metadata is used for all tokens.
-    bool public sameMetadataForAll;
+    bool public immutable sameMetadataForAll;
+    /// @notice Commission percentage for each sale.
+    uint256 public immutable comision;
     /// @notice Base URI for token metadata.
     string public baseURI;
     /// @notice Common metadata URI for all tokens.

@@ -82,7 +82,11 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
     /// @param price Price paid in ENO.
     /// @param commissionAmount Commission amount in ENO.
     /// @param ownerAmount Amount sent to the owner wallet in ENO.
-    event NFTBoughtAndMinted(address indexed buyer, uint256 tokenId, uint256 price, uint256 commissionAmount, uint256 ownerAmount);
+    event NFTBoughtAndMinted(address indexed buyer, uint256 tokenId, uint256 price);
+    /// @notice Emitted when funds are withdrawn.
+    /// @param commissionAmount Amount sent to the commission wallet.
+    /// @param ownerAmount Amount sent to the owner wallet.
+    event FundsWithdrawn(uint256 commissionAmount, uint256 ownerAmount);
 
     /// @notice Constructor to initialize the contract with required parameters.
     /// @param _commissionWallet Address of the commission wallet.
@@ -151,7 +155,7 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
     /// @dev Transfers ENO from the buyer to the contract, then mints a new NFT.
     function buyNFTWithENO() public nonReentrant {
         require(block.timestamp >= saleStartTime, "Sale has not started yet");
-        
+
         uint256 price = NFTPriceInENO;
         require(price > 0, "NFT price must be greater than zero");
 
@@ -159,19 +163,30 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
         require(mintedCount < maxMintsPerWallet, "Exceeds maximum NFTs");
 
         _mintedCount[msg.sender] = mintedCount + 1;
-        require(enoToken.transferFrom(msg.sender, address(this), price), "Failed to transfer ENO");
 
-        uint256 commissionAmount = price * comision / 100;
-        uint256 ownerAmount = price - commissionAmount;
-        enoToken.safeTransfer(commissionWallet, commissionAmount);
-        enoToken.safeTransfer(ownerWallet, ownerAmount);
+        // Transfer ENO tokens from buyer to contract
+        require(enoToken.transferFrom(msg.sender, address(this), price), "Failed to transfer ENO");
 
         uint256 newTokenId = _tokenId;
         require(newTokenId <= max_supply, "Max supply reached");
         _mint(msg.sender, newTokenId);
         _tokenId++;
 
-        emit NFTBoughtAndMinted(msg.sender, newTokenId, price, commissionAmount, ownerAmount);
+        emit NFTBoughtAndMinted(msg.sender, newTokenId, price);
+    }
+
+    /// @notice Function to withdraw accumulated funds to the commission and owner wallets.
+    function withdraw() public nonReentrant {
+        require(msg.sender == commissionWallet || msg.sender == ownerWallet, "Caller is not authorized");
+        
+        uint256 balance = enoToken.balanceOf(address(this));
+        uint256 commissionAmount = balance * comision / 100;
+        uint256 ownerAmount = balance - commissionAmount;
+
+        enoToken.safeTransfer(commissionWallet, commissionAmount);
+        enoToken.safeTransfer(ownerWallet, ownerAmount);
+
+        emit FundsWithdrawn(commissionAmount, ownerAmount);
     }
 
 }

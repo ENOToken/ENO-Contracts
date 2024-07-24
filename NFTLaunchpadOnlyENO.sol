@@ -165,7 +165,7 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
         _mintedCount[msg.sender] = mintedCount + 1;
 
         // Transfer ENO tokens from buyer to contract
-        require(enoToken.transferFrom(msg.sender, address(this), price), "Failed to transfer ENO");
+        enoToken.safeTransferFrom(msg.sender, address(this), price);
 
         uint256 newTokenId = _tokenId;
         require(newTokenId <= max_supply, "Max supply reached");

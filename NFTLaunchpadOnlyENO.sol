@@ -61,7 +61,7 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
     /// @notice Indicates if the same metadata is used for all tokens.
     bool public immutable sameMetadataForAll;
     /// @notice Commission percentage for each sale.
-    uint256 public immutable comision;
+    uint256 public immutable commission;
     /// @notice Base URI for token metadata.
     string public baseURI;
     /// @notice Common metadata URI for all tokens.
@@ -97,7 +97,7 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
     /// @param _maxSupply Maximum supply of tokens.
     /// @param _NFTPriceInENO Price of each NFT in ENO.
     /// @param _sameMetadataForAll Indicates if the same metadata is used for all tokens.
-    /// @param _comision Commission percentage for each sale.
+    /// @param _commission Commission percentage for each sale.
     constructor(
         address _commissionWallet,
         address _ownerWallet,
@@ -107,7 +107,7 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
         uint256 _maxSupply,
         uint256 _NFTPriceInENO,
         bool _sameMetadataForAll,
-        uint256 _comision
+        uint256 _commission
     ) ERC721("NFTENO", "NFTENO") Ownable() {
         require(_commissionWallet != address(0), "Commission wallet address cannot be zero");
         require(_ownerWallet != address(0), "Owner wallet address cannot be zero");
@@ -121,7 +121,7 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
         max_supply = _maxSupply;
         NFTPriceInENO = _NFTPriceInENO;
         sameMetadataForAll = _sameMetadataForAll;
-        comision = _comision;
+        commission = _commission;
     }
 
     /// @notice Function to set the metadata URI.
@@ -180,7 +180,7 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
         require(msg.sender == commissionWallet || msg.sender == ownerWallet, "Caller is not authorized");
         
         uint256 balance = enoToken.balanceOf(address(this));
-        uint256 commissionAmount = balance * comision / 100;
+        uint256 commissionAmount = balance * commission / 100;
         uint256 ownerAmount = balance - commissionAmount;
 
         enoToken.safeTransfer(commissionWallet, commissionAmount);

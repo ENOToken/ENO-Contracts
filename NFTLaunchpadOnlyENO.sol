@@ -151,20 +151,26 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
     /// @dev Transfers ENO from the buyer to the contract, then mints a new NFT.
     function buyNFTWithENO() public nonReentrant {
         require(block.timestamp >= saleStartTime, "Sale has not started yet");
-        require(NFTPriceInENO > 0, "NFT price must be greater than zero");
-        require(_mintedCount[msg.sender] < maxMintsPerWallet, "Exceeds maximum NFTs");
-        require(enoToken.transferFrom(msg.sender, address(this), NFTPriceInENO), "Failed to transfer ENO");
+        
+        uint256 price = NFTPriceInENO;
+        require(price > 0, "NFT price must be greater than zero");
 
-        uint256 commissionAmount = NFTPriceInENO * comision / 100;
-        uint256 ownerAmount = NFTPriceInENO - commissionAmount;
+        uint256 mintedCount = _mintedCount[msg.sender];
+        require(mintedCount < maxMintsPerWallet, "Exceeds maximum NFTs");
+
+        _mintedCount[msg.sender] = mintedCount + 1;
+        require(enoToken.transferFrom(msg.sender, address(this), price), "Failed to transfer ENO");
+
+        uint256 commissionAmount = price * comision / 100;
+        uint256 ownerAmount = price - commissionAmount;
         enoToken.safeTransfer(commissionWallet, commissionAmount);
         enoToken.safeTransfer(ownerWallet, ownerAmount);
 
-        _mintedCount[msg.sender] += 1;
         uint256 newTokenId = _tokenId;
         mint(msg.sender);
-        emit NFTBoughtAndMinted(msg.sender, newTokenId, NFTPriceInENO, commissionAmount, ownerAmount);
+        emit NFTBoughtAndMinted(msg.sender, newTokenId, price, commissionAmount, ownerAmount);
     }
+
 
     /// @notice Internal function to mint a new token.
     /// @param to Address to which the token is minted.

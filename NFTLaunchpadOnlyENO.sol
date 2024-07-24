@@ -167,17 +167,11 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
         enoToken.safeTransfer(ownerWallet, ownerAmount);
 
         uint256 newTokenId = _tokenId;
-        mint(msg.sender);
+        require(newTokenId <= max_supply, "Max supply reached");
+        _mint(msg.sender, newTokenId);
+        _tokenId++;
+
         emit NFTBoughtAndMinted(msg.sender, newTokenId, price, commissionAmount, ownerAmount);
     }
 
-
-    /// @notice Internal function to mint a new token.
-    /// @param to Address to which the token is minted.
-    /// @dev Requires the maximum supply not to be exceeded.
-    function mint(address to) internal {
-        require(_tokenId <= max_supply, "Max supply reached");
-        _mint(to, _tokenId);
-        _tokenId++;
-    }
 }

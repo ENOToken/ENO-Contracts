@@ -6,10 +6,10 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contr
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/utils/Strings.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/security/ReentrancyGuard.sol";
 
-/// @title NFTENO
-/// @notice This contract implements an ERC721 token that can be bought with ETH.
+/// @title Custom NFT
+/// @notice This contract implements a customizable ERC721 token that can be bought with ETH.
 /// @dev Inherits from ERC721Enumerable, Ownable, and ReentrancyGuard.
-contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
+contract CustomNFT is ERC721Enumerable, Ownable, ReentrancyGuard {
     using Strings for uint256;
 
     /// @notice Maximum supply of tokens that can be minted.

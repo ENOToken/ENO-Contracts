@@ -1,27 +1,6 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.20;
+pragma solidity 0.8.24;
 
-/*
- *
- *  /$$$$$$$$ /$$   /$$  /$$$$$$  /$$$$$$$$ /$$$$$$  /$$   /$$ /$$$$$$$$ /$$   /$$     /$$$$$$  /$$$$$$ 
- * | $$_____/| $$$ | $$ /$$__  $$|__  $$__//$$__  $$| $$  /$$/| $$_____/| $$$ | $$    |_  $$_/ /$$__  $$
- * | $$      | $$$$| $$| $$  \ $$   | $$  | $$  \ $$| $$ /$$/ | $$      | $$$$| $$      | $$  | $$  \ $$
- * | $$$$$   | $$ $$ $$| $$  | $$   | $$  | $$  | $$| $$$$$/  | $$$$$   | $$ $$ $$      | $$  | $$  | $$
- * | $$__/   | $$  $$$$| $$  | $$   | $$  | $$  | $$| $$  $$  | $$__/   | $$  $$$$      | $$  | $$  | $$
- * | $$      | $$\  $$$| $$  | $$   | $$  | $$  | $$| $$\  $$ | $$      | $$\  $$$      | $$  | $$  | $$
- * | $$$$$$$$| $$ \  $$|  $$$$$$/   | $$  |  $$$$$$/| $$ \  $$| $$$$$$$$| $$ \  $$ /$$ /$$$$$$|  $$$$$$/
- * |________/|__/  \__/ \______/    |__/   \______/ |__/  \__/|________/|__/  \__/|__/|______/ \______/ 
- *
- * @title Launchpad
- * @notice This contract represents a launchpad for NFTs that can be bought using ENO tokens.
- * @dev Implements ERC721 tokens and uses ERC20 tokens for purchasing NFTs.
- * @web https://enotoken.io/
- * @author Juan José de la Rosa | ENO CTO
- * @link https://www.linkedin.com/in/juan-jose-de-la-rosa/
- *
- */    
-
-// Openzeppelin-v4.0.0
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/access/Ownable.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/utils/Strings.sol";
@@ -81,6 +60,8 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
     event FundsWithdrawn(uint256 commissionAmount, uint256 ownerAmount);
 
     /// @notice Constructor to initialize the contract with required parameters.
+    /// @param _name Name of the NFT collection.
+    /// @param _symbol Symbol of the NFT collection.
     /// @param _commissionWallet Address of the commission wallet.
     /// @param _ownerWallet Address of the owner wallet.
     /// @param _saleStartTime Timestamp when the sale starts.
@@ -90,6 +71,8 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
     /// @param _sameMetadataForAll Indicates if the same metadata is used for all tokens.
     /// @param _commission Commission percentage for each sale.
     constructor(
+        string memory _name,
+        string memory _symbol,
         address _commissionWallet,
         address _ownerWallet,
         uint256 _saleStartTime,
@@ -98,7 +81,7 @@ contract NFTENO is ERC721Enumerable, Ownable, ReentrancyGuard {
         uint256 _NFTPriceInETH,
         bool _sameMetadataForAll,
         uint256 _commission
-    ) ERC721("NFTENO", "NFTENO") Ownable() {
+    ) ERC721(_name, _symbol) Ownable() {
         require(_commissionWallet != address(0), "Commission wallet address cannot be zero");
         require(_ownerWallet != address(0), "Owner wallet address cannot be zero");
 
